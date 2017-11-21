@@ -129,18 +129,35 @@ RCT_ENUM_CONVERTER(UIUserNotificationActionBehavior, (@{
     }
     content.userInfo = [RCTConvert NSDictionary:details[@"userInfo"]] ?: @{};
     content.categoryIdentifier = [RCTConvert NSString:details[@"category"]];
-
-    NSDate *triggerDate = [RCTConvert NSDate:details[@"fireDate"]];
+  
     UNCalendarNotificationTrigger *trigger = nil;
-    if (triggerDate != nil) {
-        NSDateComponents *triggerDateComponents = [[NSCalendar currentCalendar]
-                                                   components:NSCalendarUnitYear +
-                                                   NSCalendarUnitMonth + NSCalendarUnitDay +
-                                                   NSCalendarUnitHour + NSCalendarUnitMinute +
-                                                   NSCalendarUnitSecond + NSCalendarUnitTimeZone
-                                                   fromDate:triggerDate];
-        trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:triggerDateComponents
-                                                                           repeats:NO];
+    NSDictionary* repeatingWeekday = [RCTConvert NSDictionary: details[@"repeatingWeekday"]];
+    if (repeatingWeekday != nil) {
+      NSInteger hour = [RCTConvert NSInteger: repeatingWeekday[@"hour"]];
+      NSInteger minute = [RCTConvert NSInteger: repeatingWeekday[@"minute"]];
+      NSInteger weekday = [RCTConvert NSInteger: repeatingWeekday[@"weekday"]];
+      
+      NSDateComponents* triggerDateComponents = [NSDateComponents new];
+      [triggerDateComponents setValue:weekday forComponent:NSCalendarUnitWeekday];
+      [triggerDateComponents setValue:hour forComponent:NSCalendarUnitHour];
+      [triggerDateComponents setValue:minute forComponent:NSCalendarUnitMinute];
+      [triggerDateComponents setValue:0 forComponent:NSCalendarUnitSecond];
+      [triggerDateComponents setTimeZone:[NSTimeZone defaultTimeZone]];
+      
+      trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:triggerDateComponents
+                                                               repeats:YES];
+    } else {
+      NSDate *triggerDate = [RCTConvert NSDate:details[@"fireDate"]];
+      if (triggerDate != nil) {
+          NSDateComponents *triggerDateComponents = [[NSCalendar currentCalendar]
+                                                     components:NSCalendarUnitYear +
+                                                     NSCalendarUnitMonth + NSCalendarUnitDay +
+                                                     NSCalendarUnitHour + NSCalendarUnitMinute +
+                                                     NSCalendarUnitSecond + NSCalendarUnitTimeZone
+                                                     fromDate:triggerDate];
+          trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:triggerDateComponents
+                                                                             repeats:NO];
+      }
     }
 
     return [UNNotificationRequest requestWithIdentifier:notificationId

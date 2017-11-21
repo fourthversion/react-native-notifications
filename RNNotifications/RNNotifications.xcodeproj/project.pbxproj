@@ -207,6 +207,7 @@
 					"$(SRCROOT)/../example/node_modules/react-native/React/**",
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
@@ -223,6 +224,7 @@
 					"$(SRCROOT)/../example/node_modules/react-native/React/**",
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
